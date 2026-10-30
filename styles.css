@@ -1335,7 +1335,7 @@ a:focus-visible {
 
   .menu-card {
     min-height: 139px;
-    grid-template-columns: 39% 1fr;
+    grid-template-columns: 44% 1fr;
   }
 
   .food-visual {
