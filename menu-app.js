@@ -4,6 +4,8 @@ const translations = {
   en: {
     menuCategories: "Menu categories",
     switchLanguage: "Switch language",
+    openSearch: "Open menu search",
+    closeSearch: "Close menu search",
     searchLabel: "Search menu",
     searchPlaceholder: "Search dishes...",
     noSearchResults: "No dishes found. Try another name.",
@@ -17,6 +19,8 @@ const translations = {
   mr: {
     menuCategories: "मेनूचे विभाग",
     switchLanguage: "भाषा बदला",
+    openSearch: "मेनूमध्ये शोध उघडा",
+    closeSearch: "मेनू शोध बंद करा",
     searchLabel: "मेनूमध्ये शोधा",
     searchPlaceholder: "पदार्थ शोधा...",
     noSearchResults: "पदार्थ सापडले नाहीत. दुसरे नाव वापरून पाहा.",
@@ -167,6 +171,8 @@ const menuItems = itemNames.map(([category, nameEn, nameMr], index) => {
 const categoryTabs = document.querySelector(".category-tabs");
 const menuGroups = document.querySelector("#menu-groups");
 const languageToggle = document.querySelector("#language-toggle");
+const searchToggle = document.querySelector("#search-toggle");
+const menuSearch = document.querySelector(".menu-search");
 const searchInput = document.querySelector("#menu-search");
 const searchEmptyState = document.querySelector("#search-empty-state");
 
@@ -329,6 +335,9 @@ function translatePage() {
     label.classList.toggle("is-current", label.dataset.languageLabel === language);
   });
   languageToggle.setAttribute("aria-label", translations[language].switchLanguage);
+  searchToggle.setAttribute("aria-label", menuSearch.hidden
+    ? translations[language].openSearch
+    : translations[language].closeSearch);
   searchInput.setAttribute("aria-label", translations[language].searchLabel);
   searchInput.placeholder = translations[language].searchPlaceholder;
   searchEmptyState.textContent = translations[language].noSearchResults;
@@ -340,6 +349,33 @@ function translatePage() {
 searchInput.addEventListener("input", () => {
   searchQuery = normalizeSearchText(searchInput.value);
   applyMenuFilters();
+});
+
+function closeSearch() {
+  menuSearch.hidden = true;
+  searchToggle.setAttribute("aria-expanded", "false");
+  searchToggle.setAttribute("aria-label", translations[language].openSearch);
+  searchInput.value = "";
+  searchQuery = "";
+  applyMenuFilters();
+}
+
+searchToggle.addEventListener("click", () => {
+  if (!menuSearch.hidden) {
+    closeSearch();
+    return;
+  }
+  menuSearch.hidden = false;
+  searchToggle.setAttribute("aria-expanded", "true");
+  searchToggle.setAttribute("aria-label", translations[language].closeSearch);
+  searchInput.focus();
+});
+
+searchInput.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    closeSearch();
+    searchToggle.focus();
+  }
 });
 
 languageToggle.addEventListener("click", () => {

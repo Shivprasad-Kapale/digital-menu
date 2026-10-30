@@ -27,6 +27,19 @@
           <span class="brand-name"><span>Jadhav <strong>Dhaba</strong></span><span class="brand-marathi">जाधव धाबा</span></span>
         </a>
         <div class="header-actions">
+          <button
+            class="search-toggle"
+            id="search-toggle"
+            type="button"
+            aria-label="Open menu search"
+            aria-controls="menu-search"
+            aria-expanded="false"
+          >
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="10.8" cy="10.8" r="6.8"></circle>
+              <path d="m16 16 4.2 4.2"></path>
+            </svg>
+          </button>
           <button class="language-toggle" id="language-toggle" type="button" aria-label="Switch language">
             <span class="language-option is-current" data-language-label="en">EN</span>
             <span class="language-divider">/</span>
@@ -37,7 +50,7 @@
 
       <main>
         <section class="menu-section" id="menu" aria-label="Menu">
-          <div class="menu-search">
+          <div class="menu-search" hidden>
             <label class="visually-hidden" for="menu-search" data-i18n="searchLabel">Search menu</label>
             <svg class="menu-search-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <circle cx="10.8" cy="10.8" r="6.8"></circle>

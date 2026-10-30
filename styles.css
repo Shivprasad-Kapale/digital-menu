@@ -108,6 +108,35 @@ a {
   gap: 11px;
 }
 
+.search-toggle {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.search-toggle:hover,
+.search-toggle[aria-expanded="true"] {
+  border-color: #c8d8cc;
+  background: var(--purple-soft);
+  color: var(--purple-dark);
+}
+
+.search-toggle svg {
+  width: 19px;
+  height: 19px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-width: 1.8;
+}
+
 .language-toggle {
   display: inline-flex;
   align-items: center;
@@ -1266,6 +1295,12 @@ a:focus-visible {
 
   .header-actions {
     gap: 5px;
+  }
+
+  .search-toggle {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
   }
 
   .language-toggle {
