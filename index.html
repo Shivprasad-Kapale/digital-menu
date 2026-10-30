@@ -37,7 +37,24 @@
 
       <main>
         <section class="menu-section" id="menu" aria-label="Menu">
+          <div class="menu-search">
+            <label class="visually-hidden" for="menu-search" data-i18n="searchLabel">Search menu</label>
+            <svg class="menu-search-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="10.8" cy="10.8" r="6.8"></circle>
+              <path d="m16 16 4.2 4.2"></path>
+            </svg>
+            <input
+              id="menu-search"
+              type="search"
+              aria-controls="menu-groups"
+              placeholder="Search dishes..."
+              autocomplete="off"
+            />
+          </div>
           <div class="category-tabs" role="tablist" aria-label="Menu categories"></div>
+          <p class="search-empty-state" id="search-empty-state" role="status" aria-live="polite" hidden>
+            No dishes found. Try another name.
+          </p>
           <div id="menu-groups"></div>
         </section>
 

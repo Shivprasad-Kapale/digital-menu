@@ -4,6 +4,9 @@ const translations = {
   en: {
     menuCategories: "Menu categories",
     switchLanguage: "Switch language",
+    searchLabel: "Search menu",
+    searchPlaceholder: "Search dishes...",
+    noSearchResults: "No dishes found. Try another name.",
     all: "All",
     closingLine: "From our counter to your cravings.",
     closingSignature: "Jadhav Dhaba · Veg & Non-Veg",
@@ -14,6 +17,9 @@ const translations = {
   mr: {
     menuCategories: "मेनूचे विभाग",
     switchLanguage: "भाषा बदला",
+    searchLabel: "मेनूमध्ये शोधा",
+    searchPlaceholder: "पदार्थ शोधा...",
+    noSearchResults: "पदार्थ सापडले नाहीत. दुसरे नाव वापरून पाहा.",
     all: "सर्व",
     closingLine: "तुमच्या आवडीसाठी आमच्या काउंटरवरून.",
     closingSignature: "जाधव धाबा · व्हेज आणि नॉन व्हेज",
@@ -161,6 +167,8 @@ const menuItems = itemNames.map(([category, nameEn, nameMr], index) => {
 const categoryTabs = document.querySelector(".category-tabs");
 const menuGroups = document.querySelector("#menu-groups");
 const languageToggle = document.querySelector("#language-toggle");
+const searchInput = document.querySelector("#menu-search");
+const searchEmptyState = document.querySelector("#search-empty-state");
 
 function getInitialLanguage() {
   try {
@@ -171,21 +179,56 @@ function getInitialLanguage() {
 }
 
 let language = getInitialLanguage();
+let selectedCategory = "all";
+let searchQuery = "";
 
 function selectCategory(category) {
+  selectedCategory = category;
   document.querySelectorAll(".category-tab").forEach((tab) => {
     const isSelected = tab.dataset.category === category;
     tab.classList.toggle("is-active", isSelected);
     tab.setAttribute("aria-selected", String(isSelected));
   });
+  applyMenuFilters();
+}
+
+function normalizeSearchText(value) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLocaleLowerCase()
+    .trim()
+    .replace(/\s+/g, " ");
+}
+
+function applyMenuFilters() {
+  let visibleItems = 0;
   document.querySelectorAll(".menu-group").forEach((group) => {
-    group.classList.toggle("is-hidden", category !== "all" && group.dataset.group !== category);
+    const categoryMatches = selectedCategory === "all" || group.dataset.group === selectedCategory;
+    let visibleGroupItems = 0;
+    group.querySelectorAll(".menu-card").forEach((card) => {
+      const matchesSearch = !searchQuery || card.dataset.searchText.includes(searchQuery);
+      card.classList.toggle("is-hidden", !matchesSearch);
+      if (matchesSearch) visibleGroupItems += 1;
+    });
+    group.classList.toggle("is-hidden", !categoryMatches || visibleGroupItems === 0);
+    if (categoryMatches) visibleItems += visibleGroupItems;
   });
+  searchEmptyState.hidden = !searchQuery || visibleItems > 0;
 }
 
 function createFoodCard(item) {
   const card = document.createElement("article");
   card.className = "menu-card";
+  const category = categories.find((entry) => entry.id === item.category);
+  card.dataset.searchText = normalizeSearchText([
+    item.nameEn,
+    item.nameMr,
+    item.descriptionEn,
+    item.descriptionMr,
+    category.nameEn,
+    category.nameMr,
+  ].join(" "));
 
   const visual = document.createElement("div");
   visual.className = "food-visual";
@@ -286,10 +329,18 @@ function translatePage() {
     label.classList.toggle("is-current", label.dataset.languageLabel === language);
   });
   languageToggle.setAttribute("aria-label", translations[language].switchLanguage);
+  searchInput.setAttribute("aria-label", translations[language].searchLabel);
+  searchInput.placeholder = translations[language].searchPlaceholder;
+  searchEmptyState.textContent = translations[language].noSearchResults;
   document.querySelector('[role="tablist"]').setAttribute("aria-label", translations[language].menuCategories);
   renderMenu();
   selectCategory("all");
 }
+
+searchInput.addEventListener("input", () => {
+  searchQuery = normalizeSearchText(searchInput.value);
+  applyMenuFilters();
+});
 
 languageToggle.addEventListener("click", () => {
   language = language === "en" ? "mr" : "en";
